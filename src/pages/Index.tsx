@@ -5,6 +5,7 @@ import { Hero3D } from '@/components/Hero3D';
 import { Services } from '@/components/Services';
 import { CaseStudies } from '@/components/CaseStudies';
 import { About } from '@/components/About';
+import { TrustedBySection } from '@/components/TrustedBySection';
 import { Contact } from '@/components/Contact';
 import { Footer } from '@/components/Footer';
 
@@ -22,6 +23,7 @@ const Index = () => {
       <Services />
       <CaseStudies />
       <About />
+      <TrustedBySection />
       <Contact />
       <Footer />
     </div>

@@ -114,6 +114,10 @@ export default {
 				'sparkle': {
 					'0%, 100%': { opacity: '0', transform: 'scale(0)' },
 					'50%': { opacity: '1', transform: 'scale(1)' }
+				},
+				'infinite-scroll': {
+					'0%': { transform: 'translateX(0)' },
+					'100%': { transform: 'translateX(-50%)' }
 				}
 			},
 			animation: {
@@ -124,7 +128,8 @@ export default {
 				'scale-in': 'scale-in 0.6s ease-out',
 				'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
 				'float': 'float 6s ease-in-out infinite',
-				'sparkle': 'sparkle 2s infinite'
+				'sparkle': 'sparkle 2s infinite',
+				'infinite-scroll': 'infinite-scroll 30s linear infinite'
 			}
 		}
 	},

@@ -1,19 +1,29 @@
-import { Suspense } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import Spline from '@splinetool/react-spline';
+import { ThreeDFallback } from './ThreeDFallback';
 // Using inline logo for now until file loads
 
 export const Hero3D = () => {
+  const [splineError, setSplineError] = useState(false);
+
   return (
     <section id="hero" className="relative h-screen flex items-center justify-center bg-background overflow-hidden">
-      {/* 3D Spline Scene */}
+      {/* 3D Scene - Spline with Fallback */}
       <div className="absolute inset-0 z-10">
-        <Suspense fallback={
-          <div className="w-full h-full flex items-center justify-center">
-            <div className="animate-glow-pulse text-chrome-start">Loading 3D Experience...</div>
-          </div>
-        }>
-          <Spline scene="https://prod.spline.design/BrblMzhbHHzhbApc/scene.splinecode" />
-        </Suspense>
+        {!splineError ? (
+          <Suspense fallback={
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="animate-glow-pulse text-chrome-start">Loading 3D Experience...</div>
+            </div>
+          }>
+            <Spline 
+              scene="https://prod.spline.design/BrblMzhbHHzhbApc/scene.splinecode"
+              onError={() => setSplineError(true)}
+            />
+          </Suspense>
+        ) : (
+          <ThreeDFallback />
+        )}
       </div>
       
       {/* VIGOR Logo Overlay */}

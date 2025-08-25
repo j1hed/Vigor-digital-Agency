@@ -12,13 +12,15 @@ const projects = [
     title: 'Aurora Health',
     category: 'Healthcare Innovation', 
     description: 'Next-generation telemedicine platform connecting patients with specialists globally.',
-    color: 'from-neon/20 to-glow-primary/20'
+    color: '', 
+    img: 'src/assets/medicin.JPG'  // Ensure this path is correct
   },
   {
-    title: 'Nexus Retail',
-    category: 'E-commerce Evolution',
-    description: 'Immersive shopping experience with AR visualization and personalized recommendations.',
-    color: 'from-glow-secondary/20 to-chrome-start/20'
+    title: 'Tea Associates',
+    category: 'E-commerce Example',
+    description: 'Artisan tea brand showcasing sustainable, mindful e-commerce',
+    url: 'https://www.teaassociates.com.au',
+    video: '/public/video/tea.mp4'  // Ensure this path is correct
   },
   {
     title: 'Stellar Logistics',
@@ -55,19 +57,14 @@ export const CaseStudies = () => {
               style={{ animationDelay: `${index * 0.3}s` }}
               onMouseEnter={() => setHoveredProject(index)}
               onMouseLeave={() => setHoveredProject(null)}
+              onClick={() => project.url && window.open(project.url, '_blank')}
             >
               {/* Background gradient */}
-              <div className={`
-                absolute inset-0 bg-gradient-to-br ${project.color} 
-                opacity-0 group-hover:opacity-100 transition-opacity duration-700
-              `} />
+              <div className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
               
               {/* Content */}
               <div className="relative z-10 h-full flex flex-col justify-end p-8">
-                <div className={`
-                  transform transition-all duration-500
-                  ${hoveredProject === index ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-70'}
-                `}>
+                <div className={`transform transition-all duration-500 ${hoveredProject === index ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-70'}`}>
                   <div className="text-sm text-chrome-mid font-light tracking-wider mb-2">
                     {project.category}
                   </div>
@@ -82,12 +79,16 @@ export const CaseStudies = () => {
                 </div>
                 
                 {/* Hover indicator */}
-                <div className={`
-                  absolute top-6 right-6 w-2 h-2 bg-chrome-start rounded-full
-                  transform transition-all duration-300
-                  ${hoveredProject === index ? 'scale-150 glow' : 'scale-100'}
-                `} />
+                <div className={`absolute top-6 right-6 w-2 h-2 bg-chrome-start rounded-full transform transition-all duration-300 ${hoveredProject === index ? 'scale-150 glow' : 'scale-100'}`} />
               </div>
+              
+              {/* Image or Video Rendering */}
+              {project.img && (
+                <img src={project.img} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
+              )}
+              {project.video && (
+                <video src={project.video} className="absolute inset-0 w-full h-full object-cover" autoPlay muted controls />
+              )}
               
               {/* Cinematic overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />

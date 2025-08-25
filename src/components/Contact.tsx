@@ -47,7 +47,7 @@ export const Contact = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input
                   name="name"
-                  placeholder="Your Name"
+                  placeholder="name"
                   value={formData.name}
                   onChange={handleChange}
                   className="
@@ -73,7 +73,7 @@ export const Contact = () => {
               
               <Input
                 name="company"
-                placeholder="Company Name"
+                placeholder="Company"
                 value={formData.company}
                 onChange={handleChange}
                 className="
@@ -118,11 +118,11 @@ export const Contact = () => {
           </div>
           <div className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
             <div className="text-chrome-start text-lg mb-2">Phone</div>
-            <div className="text-muted-foreground font-light">+1 (555) 123-4567</div>
+            <div className="text-muted-foreground font-light">+(216) 99619052</div>
           </div>
           <div className="animate-fade-in" style={{ animationDelay: '0.9s' }}>
             <div className="text-chrome-start text-lg mb-2">Location</div>
-            <div className="text-muted-foreground font-light">San Francisco, CA</div>
+            <div className="text-muted-foreground font-light">Marsa, Tunisia</div>
           </div>
         </div>
       </div>

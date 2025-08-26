@@ -3,13 +3,16 @@ import { Card } from '@/components/ui/card';
 
 const projects = [
   {
-    title: 'Quantum Finance',
+    title: 'E-Commerce',
     category: 'Fintech Platform',
-    description: 'Revolutionary trading platform with AI-powered analytics and real-time market insights.',
-    color: 'from-glow-primary/20 to-glow-secondary/20'
+    description: 'Revolutionary E-COMMERCE platform with AI-powered analytics and real-time market insights.',
+        video: '/public/video/ecom.mp4'  ,// Ensure this path is correct
+        url:'https://www.snowboard-asylum.com/'
   },
   {
     title: 'Aurora Health',
+        url: 'https://medi-connect-woad.vercel.app/',
+
     category: 'Healthcare Innovation', 
     description: 'Next-generation telemedicine platform connecting patients with specialists globally.',
     color: '', 

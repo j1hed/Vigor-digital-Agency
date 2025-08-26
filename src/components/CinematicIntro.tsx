@@ -44,8 +44,8 @@ export const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
 
   return (
     <div className="fixed inset-0 z-50 bg-black">
-      {/* 🔹 Video plays first - Left Side */}
-      <div className="absolute left-0 top-0 w-1/2 h-full overflow-hidden">
+      {/* 🔹 Video plays first - Full Width on Mobile, Left Side on Web */}
+      <div className="absolute left-0 top-0 w-full md:w-1/2 h-full overflow-hidden">
         <video
           ref={videoRef}
           src={introVideo}
@@ -56,24 +56,21 @@ export const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
         />
       </div>
 
-      {/* 🔹 Intro overlay appears after video ends - Left Side */}
+      {/* 🔹 Intro overlay appears after video ends */}
       {showIntro && (
-        <div className="absolute left-0 top-0 w-1/2 h-full">
+        <div className="absolute left-0 top-0 w-full md:w-1/2 h-full">
           {/* Cinematic intro background */}
           <div
             className="absolute inset-0 bg-cover bg-center opacity-80 transition-opacity duration-700"
-          
           />
 
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/40 to-black/90" />
 
-          {/* Content - Centered on left side */}
+          {/* Content - Centered */}
           <div className="relative z-10 h-full flex items-center justify-center">
             <div className="animate-fade-in text-center">
-              <h1 className="text-6xl md:text-8xl font-thin text-chrome tracking-wider mb-4">
-                
-              </h1>
+              
               <div className="w-24 h-0.5 bg-gradient-chrome mx-auto animate-scale-in" />
             </div>
           </div>
@@ -81,7 +78,7 @@ export const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
       )}
 
       {/* 🔹 Agency Introduction with ENTER Button - Right Side */}
-      <div className="absolute right-0 top-0 w-1/2 h-full flex items-center justify-center p-12">
+      <div className="absolute right-0 top-0 w-full md:w-1/2 h-full flex items-center justify-center p-4 md:p-12">
         <div className="max-w-md text-foreground">
           <h2 className="text-3xl md:text-4xl font-light text-chrome mb-6 tracking-wide">
             Welcome to VIGOR
@@ -105,7 +102,7 @@ export const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
             </div>
           </div>
 
-          {/* ENTER Button on Right Side */}
+          {/* ENTER Button */}
           {showEnter && (
             <div className="animate-slide-up">
               <Button
@@ -125,7 +122,6 @@ export const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
         </div>
       </div>
 
-      {/* Divider line */}
       <div className="absolute left-1/2 top-0 h-full w-px bg-gradient-to-b from-transparent via-chrome-mid/30 to-transparent"></div>
     </div>
   );

@@ -1,0 +1,439 @@
+{
+  "name": "AI Linkedin Posting Machine",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        144,
+        288
+      ],
+      "id": "4646865b-b915-43df-9c50-16d61b447239",
+      "name": "Telegram Trigger",
+      "webhookId": "98e7701b-5dd3-4f98-8992-7157edc88fa0",
+      "credentials": {
+        "telegramApi": {
+          "id": "jEAOmG1laighjqY6",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "d37806ff-6b97-4f89-b9f1-93f0d7bf0607"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5611bb86-38c0-423b-bdc6-1abc8ca961b0",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice Message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        368,
+        288
+      ],
+      "id": "72b432ab-113f-4f9e-a139-b7442f0b4e9d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        384
+      ],
+      "id": "fd279265-86dc-4e30-bf18-de61f6722f66",
+      "name": "Get a file",
+      "webhookId": "b4ff5446-c255-4b05-9f2b-85553f0572b3",
+      "credentials": {
+        "telegramApi": {
+          "id": "jEAOmG1laighjqY6",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        768,
+        384
+      ],
+      "id": "1e84478c-bde5-4840-8362-4e6b2ad532a9",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "openAiApi": {
+          "id": "5GBaPClALhBlVGuT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ef2520ce-1dca-4385-b4f9-d6f5aaa7d1c5",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        192
+      ],
+      "id": "f03da073-d2e2-4071-8453-af9ba7a97132",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic: {{ $json.text }}",
+        "options": {
+          "systemMessage": "=** Overview **\n\nYou are a skilled research assistant. When given a topic or keyword, your task is to conduct deep, structured research across the following four areas. Replace [KEYWORD] with the provided topic and focus on findings relevant to 2025.\n\n1. Statistics and Current Data\n\n- Find recent statistics, datasets, and numerical insights related to [KEYWORD], prioritizing data from 2025.\n- Use reliable and up-to-date sources, and summarize key figures clearly.\n\n2. Case Studies and Practical Applications\n\n- Locate real-world examples and case studies of [KEYWORD] implementation.\n- Include both successful and failed use cases where available, focusing on 2025 applications or projects.\n\n3. Expert Insights and Trend Analysis\n\n- Gather expert quotes, authoritative opinions, and thought leadership around [KEYWORD].\n- Cover current challenges, trends, and forecasts relevant to 2025.\n\n4. Competitive Content and Audience Pain Points\n\n- Analyze top-ranking content about [KEYWORD] (articles, guides, videos, etc.).\n- Identify common questions, user concerns, and content gaps to understand what the audience is seeking in 2025."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        192
+      ],
+      "id": "da0e0646-cb03-4880-b1bf-803f0919e671",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "chatgpt-4o-latest"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        352
+      ],
+      "id": "678a9d9d-b798-4381-9415-b8eb2dd76a7d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "5GBaPClALhBlVGuT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic: {{ $('Telegram Trigger').item.json.message.text }}\n\nResearch: {{ $json.output }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=** Purpose **\n\nYou are a professional LinkedIn content strategist. Your role is to turn any given idea or context into a compelling LinkedIn post that maximizes engagement, builds authority, and generates leads. Follow the structure and principles below for every post you create.\n\n** Core Principles **\n\n- Hook-First Mentality: Always begin with a short, powerful hook that stops the scroll.\n- Value-Driven: Deliver actionable, relevant insights that benefit the audience.\n- Audience-Centric: Speak directly to reader pain points, goals, and emotions.\n- Conversion-Focused: Use clear, direct CTAs to encourage engagement or next steps.\n- Authentic Tone: Maintain a human, relatable voice.\n\n** Post Structure (The 4-Part Framework) **\n\n1. The Hook (8–10 words max)\nPurpose: Stop the scroll within 3 seconds.\nRequirements:\n\n- Keep it short, clear, and curiosity-driven.\n- Use proven formats:\n\n  - Problem-Driven: “Your LinkedIn posts are being ignored.”\n  - Outcome-Focused: “How I generated $50k from one post.”\n  - Numbers-Driven: “3 mistakes killing your LinkedIn reach.”\n  - Personal/Emotional: “How I went from 0 to 10K followers.”\n  - Curiosity: “The LinkedIn secret nobody talks about.”\n  - Statement/Mistake-Based: “Hard truth: You’re wasting time on LinkedIn.”\n\n2. The Core (Value Section)\nPurpose: Deliver on the hook’s promise and build trust.\nFormats to use:\n\n- Tips and tricks\n- Framework explanations\n- Step-by-step guides (3–5 bullet points)\n- How-to walkthroughs\n- Industry insights\nRequirements:\n- Use numbered lists or bullets\n- Include specific examples and results\n- Break content into short paragraphs for readability\n\n3. The Sauce (Personal Touch)\nPurpose: Differentiate the post and build emotional connection.\nInclude one of the following:\n\n- Personal story (“When I started, I made this exact mistake…”)\n- Client result (“After implementing this, my client saw…”)\n- Behind-the-scenes insight (“Here’s what I learned after analyzing 1000+ posts…”)\n- Contrarian view (“Everyone says X, but here’s why Y works better…”)\n\n4. The CTA (Call-to-Action)\nPurpose: Move readers toward a next step. Choose ONE type:\n\n- Comment: “Which mistake are you making? Comment below.”\n- DM Invite: “DM ‘STRATEGY’ to claim your spot.”\n- Resource: “Want my free audit template? Comment ‘AUDIT’.”\n- Exclusive: “This is for freelancers only. DM ‘FREELANCE’.”\n\n** Content Types **\nUse a mix of these types across your posts:\n\n- Educational Content (50%)\n\n  - Use: Teach frameworks, insights, and tips\n  - Format: How-to guides, industry lessons, myths busted\n\n- Authority-Building Content (30%)\n\n  - Use: Showcase credibility and results\n  - Format: Case studies, personal milestones, client success stories\n\n- Lead-Generating Content (20%)\n\n  - Use: Turn attention into leads\n  - Format: Free offers, service invites, audits, webinars\n\n** Tone & Voice Guidelines **\n\n- Writing Style\n\n  - Conversational: Write like you’re talking to a friend\n  - Confident: Avoid hedging or passive language\n  - Specific: Use numbers, timeframes, and real metrics\n  - Urgent: Build time-sensitive value\n  - Empathetic: Show you understand audience struggles\n\n- Language Patterns\n\n  - Use “you” to speak directly\n  - Ask rhetorical questions\n  - Use active voice\n  - Vary sentence length for rhythm\n  - Include sensory or emotional elements when possible\n\n** Success Metrics to Optimize For **\n\n- Comments (most important for reach)\n- Shares/Reposts (amplify visibility)\n- Saves (indicates high value)\n- Profile clicks (drives curiosity)\n- DMs (strong conversion indicator)\n\n** Response Format for the AI **\n\nWhen generating a LinkedIn post, return the following:\n\n- Post Content: The complete LinkedIn post text\n\n** What to Avoid **\n\n- Don't include introduction headers or any other parts that are no the actual post such as \"post content\" and so on. In the response only include the post content, nothing else\n- Don't use \"*\" signs in the outpu text\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1488,
+        192
+      ],
+      "id": "a395d7cf-8ebd-4826-8e8e-a00541011ece",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "chatgpt-4o-latest"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        352
+      ],
+      "id": "f8a14085-dea1-477d-a8e9-e2724b39adf7",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "5GBaPClALhBlVGuT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "gS0UkrO5RO",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        2192,
+        192
+      ],
+      "id": "bddd8541-84a5-457b-aa64-d26703e95f77",
+      "name": "Create a post",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "iDKES5k6uS3U5dUz",
+          "name": "LinkedIn account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Getting Message Content from Telegram",
+        "height": 600,
+        "width": 980,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5f3ac526-d34b-469f-a432-3c3336cc5800",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Content Processing",
+        "height": 600,
+        "width": 880,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        0
+      ],
+      "id": "49ef182e-3b46-4657-91c7-7a973f80e805",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Publishing on Linkedin",
+        "height": 600,
+        "width": 680,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        0
+      ],
+      "id": "d8543f22-e5fa-41e4-bceb-359e9708f612",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "058e548c-d079-4635-928a-03001246ffb7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8ec8bfddbd59fdde442d5ed0bec9c8e336f78ad4e7b2c1393fe111ac5a29897c"
+  },
+  "id": "Hlj3tn5jAJkWajK3",
+  "tags": []
+}

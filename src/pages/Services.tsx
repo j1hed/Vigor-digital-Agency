@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 const services = [
@@ -28,6 +29,16 @@ const services = [
 ];
 
 export const Services = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % services.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + services.length) % services.length);
+  };
+
   return (
     <section id="services" className="py-32 px-8 bg-gradient-surface relative overflow-hidden">
       {/* Ambient background elements */}
@@ -44,7 +55,8 @@ export const Services = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Desktop Grid Layout */}
+        <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {services.map((service, index) => (
             <div 
               key={service.title}
@@ -97,6 +109,74 @@ export const Services = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Mobile Horizontal Carousel */}
+        <div className="md:hidden relative">
+          <div className="overflow-hidden">
+            <div 
+              className="flex transition-transform duration-300 ease-in-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {services.map((service, index) => (
+                <div key={service.title} className="w-full flex-shrink-0 px-4">
+                  <div className="group perspective-1000" style={{ perspective: '1000px' }}>
+                    <div className="relative w-full h-80">
+                      {/* Front of Card - Simplified for mobile */}
+                      <Card 
+                        className="
+                          w-full h-full
+                          bg-gradient-to-br from-surface/60 to-surface/40
+                          border border-chrome-mid/30 backdrop-blur-xl
+                          shadow-2xl shadow-black/30
+                          flex flex-col items-center justify-center p-8
+                        "
+                      >
+                        <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${service.color} flex items-center justify-center mb-6`}>
+                          <span className="text-2xl text-chrome">{service.icon}</span>
+                        </div>
+                        
+                        <CardTitle className="text-xl font-light text-foreground tracking-wide mb-4 text-center">
+                          {service.title}
+                        </CardTitle>
+                        
+                        <CardDescription className="text-muted-foreground font-light leading-relaxed text-center">
+                          {service.description}
+                        </CardDescription>
+                      </Card>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Navigation Arrows */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-surface/80 backdrop-blur-sm border border-chrome-mid/20 rounded-full p-3 z-10"
+          >
+            ←
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-surface/80 backdrop-blur-sm border border-chrome-mid/20 rounded-full p-3 z-10"
+          >
+            →
+          </button>
+          
+          {/* Dots Indicator */}
+          <div className="flex justify-center mt-6 space-x-2">
+            {services.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  currentSlide === index ? 'bg-chrome-start' : 'bg-chrome-mid/30'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 

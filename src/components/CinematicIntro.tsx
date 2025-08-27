@@ -58,14 +58,14 @@ export const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
 
       {/* 🔹 Intro overlay appears after video ends */}
       {showIntro && (
-        <div className="absolute left-0 top-0 w-full md:w-1/2 h-full">
+        <div className="">
           {/* Cinematic intro background */}
           <div
             className="absolute inset-0 bg-cover bg-center opacity-80 transition-opacity duration-700"
           />
 
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/40 to-black/90" />
+          <div className="absolute inset-0 bg-gradient-to-b " />
 
           {/* Content - Centered */}
           <div className="relative z-10 h-full flex items-center justify-center">
@@ -113,6 +113,8 @@ export const CinematicIntro = ({ onComplete }: CinematicIntroProps) => {
                   text-foreground font-light tracking-widest text-lg border border-chrome-mid/30 
                   hover:border-chrome-start hover:bg-chrome-start/10 hover:text-chrome-start
                   transition-all duration-500 px-12 py-6 ripple glow-text w-full
+                  md:static fixed bottom-8 left-4 right-4 md:bottom-auto md:left-auto md:right-auto
+                  z-50 bg-background/90 backdrop-blur-sm
                 "
               >
                 ENTER

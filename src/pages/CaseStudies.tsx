@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
+import { gsap } from 'gsap';
 
 const projects = [
   {
     title: 'E-Commerce',
     category: 'Fintech Platform',
     description: 'Revolutionary E-COMMERCE platform with AI-powered analytics and real-time market insights.',
-    video: '/public/video/ecom.mp4',
+    video: '/video/ecom.mp4',
     url: 'https://www.snowboard-asylum.com/'
   },
   {
@@ -22,7 +23,7 @@ const projects = [
     category: 'E-commerce Example',
     description: 'Artisan tea brand showcasing sustainable, mindful e-commerce',
     url: 'https://www.teaassociates.com.au',
-    video: '/public/video/tea.mp4'
+    video: '/video/tea.mp4'
   },
   {
     title: 'Stellar Logistics',
@@ -35,6 +36,36 @@ const projects = [
 export const CaseStudies = () => {
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  
+  // Simple GSAP animations for performance
+  useEffect(() => {
+    const cards = cardsRef.current.filter(Boolean);
+    
+    // Entrance animations
+    gsap.fromTo(cards, 
+      {
+        opacity: 0,
+        y: 50,
+        scale: 0.95
+      },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'power2.out'
+      }
+    );
+    
+    // Cleanup function
+    return () => {
+      cards.forEach(card => {
+        gsap.killTweensOf(card);
+      });
+    };
+  }, []);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % projects.length);
@@ -42,6 +73,26 @@ export const CaseStudies = () => {
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + projects.length) % projects.length);
+  };
+
+  const handleMouseEnter = (index: number, card: HTMLDivElement) => {
+    setHoveredProject(index);
+    gsap.to(card, {
+      scale: 1.02,
+      y: -5,
+      duration: 0.3,
+      ease: 'power1.out'
+    });
+  };
+
+  const handleMouseLeave = (card: HTMLDivElement) => {
+    setHoveredProject(null);
+    gsap.to(card, {
+      scale: 1,
+      y: 0,
+      duration: 0.4,
+      ease: 'power1.out'
+    });
   };
 
   return (
@@ -59,67 +110,67 @@ export const CaseStudies = () => {
         {/* Desktop Grid Layout */}
         <div className="hidden md:grid grid-cols-1 md:grid-cols-2 gap-8">
           {projects.map((project, index) => (
-            <Card
+            <div
               key={project.title}
-              className="
-                group relative overflow-hidden bg-surface/30 border-chrome-mid/20 
-                hover:border-chrome-start/40 transition-all duration-700 h-80
-                cinematic-hover cursor-pointer animate-fade-in
-              "
-              style={{ animationDelay: `${index * 0.3}s` }}
-              onMouseEnter={() => setHoveredProject(index)}
-              onMouseLeave={() => setHoveredProject(null)}
-              onClick={() => project.url && window.open(project.url, '_blank')}
+              ref={el => cardsRef.current[index] = el}
             >
-              {/* Background gradient */}
-              <div className={`absolute inset-极 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
-              
-              {/* Content */}
-              <div className="relative z-10 h-full flex flex-col justify-end p-8">
-                <div className={`transform transition-all duration-500 ${hoveredProject === index ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-70'}`}>
-                  <div className="text-sm text-chrome-mid font-light tracking-wider mb-2">
-                    {project.category}
+              <Card
+                className="group relative overflow-hidden bg-surface/30 border-chrome-mid/20 
+                  hover:border-chrome-start/40 transition-all duration-300 h-80 cursor-pointer"
+                onMouseEnter={(e) => handleMouseEnter(index, e.currentTarget)}
+                onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
+                onClick={() => project.url && window.open(project.url, '_blank')}
+              >
+                {/* Background gradient */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                
+                {/* Content */}
+                <div className="relative z-10 h-full flex flex-col justify-end p-8">
+                  <div className={`transform transition-all duration-300 ${hoveredProject === index ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-70'}`}>
+                    <div className="text-sm text-chrome-mid font-light tracking-wider mb-2">
+                      {project.category}
+                    </div>
+                    
+                    <h3 className="text-2xl md:text-3xl font-light text-foreground mb-4 tracking-wide">
+                      {project.title}
+                    </h3>
+                    
+                    <p className="text-muted-foreground font-light leading-relaxed">
+                      {project.description}
+                    </p>
                   </div>
                   
-                  <h3 className="text-2xl md:text-3xl font-light text-foreground mb-4 tracking-wide">
-                    {project.title}
-                  </h3>
+                  {/* Hover indicator */}
+                  <div className={`absolute top-6 right-6 w-2 h-2 bg-chrome-start rounded-full transform transition-all duration-300 ${hoveredProject === index ? 'scale-150 glow' : 'scale-100'}`} />
                   
-                  <p className="text-muted-foreground font-light leading-relaxed">
-                    {project.description}
-                  </p>
+                  {/* Mobile enter button */}
+                  {project.url && (
+                    <div className="absolute bottom-6 right-6 md:hidden">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(project.url, '_blank');
+                        }}
+                        className="px-4 py-2 bg-chrome-start text-white rounded-full text-sm font-light hover:bg-chrome-end transition-colors duration-300"
+                      >
+                        View Project
+                      </button>
+                    </div>
+                  )}
                 </div>
                 
-                {/* Hover indicator */}
-                <div className={`absolute top-6 right-6 w-2 h-2 bg-chrome-start rounded-full transform transition-all duration-300 ${hoveredProject === index ? 'scale-150 glow' : 'scale-100'}`} />
-                
-                {/* Mobile enter button */}
-                {project.url && (
-                  <div className="absolute bottom-6 right-6 md:hidden">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(project.url, '_blank');
-                      }}
-                      className="px-4 py-2 bg-chrome-start text-white rounded-full text-sm font-light hover:bg-chrome-end transition-colors duration-300"
-                    >
-                      View Project
-                    </button>
-                  </div>
+                {/* Image or Video Rendering */}
+                {project.img && (
+                  <img src={project.img} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
                 )}
-              </div>
-              
-              {/* Image or Video Rendering */}
-              {project.img && (
-                <img src={project.img} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
-              )}
-              {project.video && (
-                <video src={project.video} className="absolute inset-0 w-full h-full object-cover" autoPlay muted controls />
-              )}
-              
-              {/* Cinematic overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-            </Card>
+                {project.video && (
+                  <video src={project.video} className="absolute inset-0 w-full h-full object-cover" autoPlay muted loop playsInline />
+                )}
+                
+                {/* Cinematic overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+              </Card>
+            </div>
           ))}
         </div>
 
@@ -133,19 +184,16 @@ export const CaseStudies = () => {
               {projects.map((project, index) => (
                 <div key={project.title} className="w-full flex-shrink-0 px-4">
                   <Card
-                    className="
-                      group relative overflow-hidden bg-surface/30 border-chrome-mid/20 
-                      h-80 cursor-pointer animate-fade-in
-                    "
-                    style={{ animationDelay: `${index * 0.3}s` }}
+                    className="group relative overflow-hidden bg-surface/30 border-chrome-mid/20 
+                      h-80 cursor-pointer"
                     onClick={() => project.url && window.open(project.url, '_blank')}
                   >
                     {/* Background gradient */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
+                    <div className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
                     
                     {/* Content */}
                     <div className="relative z-10 h-full flex flex-col justify-end p-8">
-                      <div className="transform transition-all duration-500 translate-y-0 opacity-100">
+                      <div className="transform transition-all duration-300 translate-y-0 opacity-100">
                         <div className="text-sm text-chrome-mid font-light tracking-wider mb-2">
                           {project.category}
                         </div>
@@ -180,7 +228,7 @@ export const CaseStudies = () => {
                       <img src={project.img} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
                     )}
                     {project.video && (
-                      <video src={project.video} className="absolute inset-0 w-full h-full object-cover" autoPlay muted controls />
+                      <video src={project.video} className="absolute inset-0 w-full h-full object-cover" autoPlay muted loop playsInline />
                     )}
                     
                     {/* Cinematic overlay */}
@@ -211,9 +259,7 @@ export const CaseStudies = () => {
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  currentSlide === index ? 'bg-chrome-start' : 'bg-chrome-mid/30'
-                }`}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${currentSlide === index ? 'bg-chrome-start' : 'bg-chrome-mid/30'}`}
               />
             ))}
           </div>

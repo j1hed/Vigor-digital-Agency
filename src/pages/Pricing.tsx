@@ -8,7 +8,7 @@ import { Check } from 'lucide-react';
 const pricingTiers = [
   {
     name: 'Basic',
-    price: '299',
+    price: '299 DT',
     description: 'Perfect for personal projects and startups',
     features: [
       'Simple website design',
@@ -21,7 +21,7 @@ const pricingTiers = [
   },
   {
     name: 'Starter',
-    price: '499',
+    price: '499 DT',
     description: 'Perfect for small businesses getting started',
     features: [
       'Basic website design',
@@ -34,7 +34,7 @@ const pricingTiers = [
   },
   {
     name: 'Professional',
-    price: '999',
+    price: '999 DT',
     description: 'Ideal for growing businesses',
     features: [
       'Custom website design',
@@ -49,7 +49,7 @@ const pricingTiers = [
   },
   {
     name: 'Enterprise',
-    price: '499',
+    price: '499 DT',
     description: 'Complete digital solution for large businesses',
     features: [
       'Premium custom design',

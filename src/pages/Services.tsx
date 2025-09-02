@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 const services = [
@@ -39,33 +40,56 @@ export const Services = () => {
     setCurrentSlide((prev) => (prev - 1 + services.length) % services.length);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
     <section id="services" className="py-32 px-8 bg-gradient-surface relative overflow-hidden">
       {/* Ambient background elements */}
       <div className="absolute top-20 left-1/4 w-96 h-96 bg-glow-primary/10 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-glow-secondary/10 rounded-full blur-3xl" />
-      
+
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-20">
           <h2 className="text-4xl md:text-6xl font-thin text-chrome tracking-wide mb-6 animate-fade-in">
             Our Services
           </h2>
-          <p className="text-xl text-muted-foreground font-light max-w-2xl mx-auto animate-fade-in" style={{animationDelay: '0.2s'}}>
+          <p className="text-xl text-muted-foreground font-light max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '0.2s' }}>
             We deliver exceptional digital solutions that drive innovation and growth.
           </p>
         </div>
-        
+
         {/* Desktop Grid Layout */}
-        <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <motion.div
+          className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           {services.map((service, index) => (
-            <div 
+            <motion.div
               key={service.title}
               className="group perspective-1000"
-              style={{ animationDelay: `${index * 0.1}s`, perspective: '1000px' }}
+              style={{ perspective: '1000px' }}
+              variants={itemVariants}
+              whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
             >
               <div className="relative w-full h-80 transition-all duration-700 transform-style-preserve-3d group-hover:rotate-y-180">
                 {/* Front of Card */}
-                <Card 
+                <Card
                   className="
                     absolute inset-0 w-full h-full backface-hidden
                     bg-gradient-to-br from-surface/60 to-surface/40
@@ -79,18 +103,18 @@ export const Services = () => {
                   <div className={`w-24 h-24 rounded-full bg-gradient-to-br ${service.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500`}>
                     <span className="text-3xl text-chrome animate-pulse">{service.icon}</span>
                   </div>
-                  
+
                   <CardTitle className="text-xl font-light text-foreground tracking-wide mb-4 text-center group-hover:text-chrome-start transition-colors duration-500">
                     {service.title}
                   </CardTitle>
-                  
+
                   <CardDescription className="text-muted-foreground font-light leading-relaxed text-center group-hover:text-foreground/80 transition-colors duration-500">
                     {service.description}
                   </CardDescription>
                 </Card>
 
                 {/* Back of Card - Revealed on hover */}
-                <Card 
+                <Card
                   className="
                     absolute inset-0 w-full h-full backface-hidden rotate-y-180
                     bg-gradient-to-br from-chrome-start/10 to-chrome-end/10
@@ -107,14 +131,14 @@ export const Services = () => {
                   </p>
                 </Card>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Mobile Horizontal Carousel */}
         <div className="md:hidden relative">
           <div className="overflow-hidden">
-            <div 
+            <div
               className="flex transition-transform duration-300 ease-in-out"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
@@ -123,7 +147,7 @@ export const Services = () => {
                   <div className="group perspective-1000" style={{ perspective: '1000px' }}>
                     <div className="relative w-full h-80">
                       {/* Front of Card - Simplified for mobile */}
-                      <Card 
+                      <Card
                         className="
                           w-full h-full
                           bg-gradient-to-br from-surface/60 to-surface/40
@@ -135,11 +159,11 @@ export const Services = () => {
                         <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${service.color} flex items-center justify-center mb-6`}>
                           <span className="text-2xl text-chrome">{service.icon}</span>
                         </div>
-                        
+
                         <CardTitle className="text-xl font-light text-foreground tracking-wide mb-4 text-center">
                           {service.title}
                         </CardTitle>
-                        
+
                         <CardDescription className="text-muted-foreground font-light leading-relaxed text-center">
                           {service.description}
                         </CardDescription>
@@ -150,7 +174,7 @@ export const Services = () => {
               ))}
             </div>
           </div>
-          
+
           {/* Navigation Arrows */}
           <button
             onClick={prevSlide}
@@ -164,7 +188,7 @@ export const Services = () => {
           >
             →
           </button>
-          
+
           {/* Dots Indicator */}
           <div className="flex justify-center mt-6 space-x-2">
             {services.map((_, index) => (

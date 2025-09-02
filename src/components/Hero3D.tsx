@@ -1,8 +1,8 @@
-import { Suspense, useState } from 'react';
-import { motion } from 'framer-motion';
+import { Suspense, useState, useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ThreeDFallback } from './ThreeDFallback';
 import introFrame from '@/assets/logointro.png';
-import vigorLogo from '@/assets/logointro.png'; // Assuming the logo is in the assets folder
+import vigorLogo from '@/assets/logointro.png';
 import Spline from '@splinetool/react-spline';
 
 const text = "Introducing VIGOR";
@@ -10,23 +10,42 @@ const text = "Introducing VIGOR";
 export const Hero3D = () => {
   const [splineError, setSplineError] = useState(false);
   const [splineLoading, setSplineLoading] = useState(true);
+  const targetRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start end", "end start"],
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.2, 0.8]);
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <section id="hero" className="relative h-screen bg-gradient-to-br from-gray-900 to-black overflow-hidden flex items-center justify-center">
+    <motion.section
+      ref={targetRef}
+      id="hero"
+      className="relative h-screen bg-gradient-to-br from-gray-900 to-black overflow-hidden flex items-center justify-center"
+      style={{ opacity, scale, y }}
+    >
       {/* Ambient background elements */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-glow-primary/10 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-glow-secondary/10 rounded-full blur-3xl animate-pulse" />
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 bg-gradient-glow/5 rounded-full blur-3xl animate-pulse" />
-      
+
       <div className="container mx-auto flex flex-col md:flex-row items-center h-full px-4 relative z-10">
         {/* VIGOR Logo in Top Left Corner */}
-        <div className="fixed top-4 left-4 z-30">
+        <motion.div
+          className="fixed top-4 left-4 z-30"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
           <img
             src={vigorLogo}
             alt="VIGOR Logo"
             className="w-32 h-32 object-contain" // Adjust size as needed
           />
-        </div>
+        </motion.div>
 
         {/* Left Section: Logo and Text */}
         <motion.div
@@ -36,7 +55,7 @@ export const Hero3D = () => {
           transition={{ duration: 1, ease: "easeOut" }}
         >
           {/* Logo */}
-          <motion.div 
+          <motion.div
             className="relative mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -98,11 +117,12 @@ export const Hero3D = () => {
         </motion.div>
 
         {/* Right Section: Spline Scene */}
-        <motion.div 
+        <motion.div
           className="w-full md:w-1/2 h-full flex items-center justify-center"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
+          style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]) }}
         >
           {splineLoading && (
             <div className="text-white">Loading 3D scene...</div>
@@ -123,6 +143,6 @@ export const Hero3D = () => {
           {splineError && <ThreeDFallback />}
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 };
